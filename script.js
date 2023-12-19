@@ -32,7 +32,8 @@ const itemsArr = [
   },
 ];
 
-var TotalAmount = 0;
+var totalAmount = 0;
+var selectedItem = {};
 
 function generateItemBoxes() {
   const itemBoxesContainer = document.querySelector(".itemsContainer");
@@ -122,7 +123,7 @@ function generateItemBoxes() {
 
     itemBox.appendChild(itemFirstRow);
 
-    // if selected showing color size selections
+    // if selected showing color size selections table
     if (item.isSelected) {
       // Item size and color row
       const itemSizeColorRow = document.createElement("div");
@@ -211,34 +212,50 @@ function generateItemBoxes() {
 
     itemBoxesContainer.appendChild(itemBox);
 
-    // calculating total amount
+    // calculating total amount & saving selectedItem
     if (item.isSelected) {
+      // saving item selected:
+      selectedItem = item;
+
+      // calculating totalAmount
       let priceAsFloat = parseFloat(item.price);
 
       // Check if (not NaN)
       if (!isNaN(priceAsFloat)) {
-        TotalAmount = item.pairCount * priceAsFloat;
+        totalAmount = item.pairCount * priceAsFloat;
         // to have two decimal places
-        TotalAmount = TotalAmount.toFixed(2);
+        totalAmount = totalAmount.toFixed(2);
         var totalSum = document.getElementsByClassName("totalSum")[0];
-        totalSum.innerHTML = ''
-        var amountdiv = document.createElement('span')
-        amountdiv.textContent = 'Total : ' +TotalAmount
-        totalSum.appendChild(amountdiv)
-
+        totalSum.innerHTML = "";
+        var amountdiv = document.createElement("span");
+        amountdiv.textContent = "Total : " + totalAmount;
+        totalSum.appendChild(amountdiv);
       }
     }
   }
 }
 
-// added dummy submit
+// added dummy submit alert
 var addToCartButton = document.getElementsByClassName("addToCartButton")[0];
 addToCartButton.addEventListener("click", function () {
-  alert('Added To Cart')
+  alert(
+    "Added To Cart: selectedItem: " +
+      JSON.stringify(selectedItem) +
+      " Total Amount : " +
+      totalAmount
+  );
 });
 
 function handleSelection(selectedIndex) {
-  itemsArr.forEach((item, i) => (item.isSelected = i === selectedIndex)); // Settin only selected item as true
+  // if clicked ,then making it selected
+  itemsArr.forEach((item, i) => {
+    if (selectedIndex === i) {
+      item.isSelected = true;
+    } else {
+      item.isSelected = false;
+    }
+  }); // Settin only selected item as true
+  console.log("selectedItem: ", selectedItem);
 
   generateItemBoxes(); // Rerendering with updated state
 }
